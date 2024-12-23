@@ -1,0 +1,10 @@
+# Ignore virtual environment
+venv/
+*.pyc
+__pycache__/
+.DS_Store
+db.sqlite3
+
+# Ignore static files and media uploads
+staticfiles/
+media/
