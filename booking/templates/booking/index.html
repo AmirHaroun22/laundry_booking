@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Laundry Booking</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    </head>
+    <body>
+        <h1>Laundry Booking</h1>
+        <h3>Date: {{day}} </h3>
+        
+        <div class="navigation">
+            <a href="?day={{ previous_day }}">Previous Day</a>
+            <a href="?day={{ next_day }}">Next Day</a>
+        </div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Machine 1</th>
+                    <th>Machine 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in time_slots %}
+                <tr>
+                    <td>{{ slot }}</td>
+                    <td><input type="text" name="Date_{{day|slugify}}_slot_{{slot|slugify}}_1" placeholder="Room"></td>
+                    <td><input type="text" name="Date_{{day|slugify}}_slot_{{slot|slugify}}_2" placeholder="Room"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <script src="{% static 'js/scripts.js' %}"></script>
+    </body>
+</html>
