@@ -16,9 +16,9 @@ def index(request):
     next_day = day + timedelta(days=1)
 
     context = {
-        'day': day,
-        'previous_day': previous_day,
-        'next_day': next_day,
+        'day': day.strftime("%Y-%m-%d"),
+        'previous_day': previous_day.strftime("%Y-%m-%d"),
+        'next_day': next_day.strftime("%Y-%m-%d"),
         'time_slots': time_slots,
     }
     return render(request, 'booking/index.html', context)

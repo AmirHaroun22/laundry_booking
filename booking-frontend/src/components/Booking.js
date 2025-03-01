@@ -3,11 +3,29 @@ import React, { useEffect, useState } from 'react';
 const Booking = () => {
     const[data, setData] = useState(null);
 
-    useEffect(() => {
-        fetch('http://localhost:8000/api/booking_slots')
+    const fetchBookingData = (dayParam = '') => {
+        let url = 'http://localhost:8000/api/booking_slots';
+        if (dayParam) {
+            url += `?day=${dayParam}`;
+        }
+        fetch(url)
             .then(response => response.json())
             .then(json => setData(json))
+            .catch(error => console.error('Error Fetching Booking Data', error));
+    };
+
+    // Initial load: fetch today's booking data
+    useEffect(() => {
+        fetchBookingData();
     }, []);
+
+    const handlePreviousDay = () => {
+        fetchBookingData(data.previous_day);
+    };
+    
+    const handleNextDay = () => {
+        fetchBookingData(data.next_day);
+    };
 
     if (!data) return <div>Loading...</div>
 
@@ -15,8 +33,8 @@ const Booking = () => {
         <div>
             <h1>Booking for {data.day}</h1>
             <div className='navigation'>
-                <a href={`?day=${data.previous_day}`}>Previous Day</a>
-                <a href={`?day=${data.next_day}`}>Next Day</a>
+                <button onClick={handlePreviousDay}>Previous Day</button>
+                <button onClick={handleNextDay}>Next Day</button>
             </div>
             <table border='1'>
                 <thead>
@@ -28,7 +46,7 @@ const Booking = () => {
                 </thead>
                 <tbody>
                     {data.time_slots.map(slot => (
-                        <tr key={slot}>
+                        <tr key={`${data.day}-${slot}`}>
                             <td>{slot}</td>
                             <td><input type='text' placeholder='Room'/></td>
                             <td><input type='text' placeholder='Room'/></td>
