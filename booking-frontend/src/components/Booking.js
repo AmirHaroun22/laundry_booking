@@ -1,37 +1,55 @@
 import React, { useEffect, useState } from 'react';
 
 const Booking = () => {
-    const[data, setData] = useState(null);
+    const[slotData, setSlotData] = useState(null);
+    const[bookings, setBookings] = useState({});
 
     const fetchBookingData = (dayParam = '') => {
-        let url = 'http://localhost:8000/api/booking_slots';
+        let url = 'http://localhost:8000/api/booking_slots/';
         if (dayParam) {
             url += `?day=${dayParam}`;
         }
         fetch(url)
             .then(response => response.json())
-            .then(json => setData(json))
-            .catch(error => console.error('Error Fetching Booking Data', error));
+            .then(json => {
+                setSlotData(json);
+                fetch(`http://localhost:8000/api/bookings/?day=${json.day}`)
+                    .then(response => response.json())
+                    .then(bookingsData => {
+                        const bookingMap = {};
+                        bookingsData.forEach(b => {
+                            bookingMap[`${b.time_slot}_${b.machine}`] = b.room;
+                        });
+                        setBookings(bookingMap);
+                    });
+            })
+            .catch(error => console.error('Error Fetching booking Data', error));
     };
-
-    // Initial load: fetch today's booking data
+    
     useEffect(() => {
         fetchBookingData();
     }, []);
 
+    // Update state when an input field is changed
+    const handleInputChange = (slot, machine, value) => {
+        const key = `${slot}_${machine}`;
+        setBookings({...bookings, [key]: value});
+        fetch('http://localhost:8000/api/bookings/', { method: 'POST', body: JSON.stringify({day: slotData.day, time_slot: slot, machine, room: value}), headers: {'Content-Type': 'application/json'} });
+    };
+
     const handlePreviousDay = () => {
-        fetchBookingData(data.previous_day);
+        fetchBookingData(slotData.previous_day);
     };
     
     const handleNextDay = () => {
-        fetchBookingData(data.next_day);
+        fetchBookingData(slotData.next_day);
     };
 
-    if (!data) return <div>Loading...</div>
+    if (!slotData) return <div>Loading...</div>
 
     return (
         <div>
-            <h1>Booking for {data.day}</h1>
+            <h1>Booking for {slotData.day_name}, {slotData.day}</h1>
             <div className='navigation'>
                 <button onClick={handlePreviousDay}>Previous Day</button>
                 <button onClick={handleNextDay}>Next Day</button>
@@ -45,11 +63,25 @@ const Booking = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.time_slots.map(slot => (
-                        <tr key={`${data.day}-${slot}`}>
+                    {slotData.time_slots.map(slot => (
+                        <tr key={`${slotData.day}-${slot}`}>
                             <td>{slot}</td>
-                            <td><input type='text' placeholder='Room'/></td>
-                            <td><input type='text' placeholder='Room'/></td>
+                            <td>
+                                <input
+                                type='text'
+                                placeholder='Room'
+                                value={bookings[`${slot}_1`] || ''}
+                                onChange={(e) => handleInputChange(slot, 1, e.target.value)}
+                                />
+                            </td>
+                            <td>
+                                <input
+                                type='text'
+                                placeholder='Room'
+                                value={bookings[`${slot}_2`] || ''}
+                                onChange={(e) => handleInputChange(slot, 2, e.target.value)}
+                                />
+                            </td>
                         </tr>
                     ))}
                 </tbody>
