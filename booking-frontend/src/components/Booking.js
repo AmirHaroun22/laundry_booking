@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import CONFIG from '../config';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = CONFIG.API_BASE_URL;
 
 const Booking = () => {
     const[slotData, setSlotData] = useState(null);
