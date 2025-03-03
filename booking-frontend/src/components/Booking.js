@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Booking = () => {
     const[slotData, setSlotData] = useState(null);
     const[bookings, setBookings] = useState({});
 
     const fetchBookingData = (dayParam = '') => {
-        let url = 'http://localhost:8000/api/booking_slots/';
+        let url = `${API_BASE_URL}/api/booking_slots/`;
         if (dayParam) {
             url += `?day=${dayParam}`;
         }
@@ -13,7 +15,7 @@ const Booking = () => {
             .then(response => response.json())
             .then(json => {
                 setSlotData(json);
-                fetch(`http://localhost:8000/api/bookings/?day=${json.day}`)
+                fetch(`${API_BASE_URL}/api/bookings/?day=${json.day}`)
                     .then(response => response.json())
                     .then(bookingsData => {
                         const bookingMap = {};
@@ -25,7 +27,7 @@ const Booking = () => {
             })
             .catch(error => console.error('Error Fetching booking Data', error));
     };
-    
+
     useEffect(() => {
         fetchBookingData();
     }, []);
@@ -34,7 +36,7 @@ const Booking = () => {
     const handleInputChange = (slot, machine, value) => {
         const key = `${slot}_${machine}`;
         setBookings({...bookings, [key]: value});
-        fetch('http://localhost:8000/api/bookings/', { method: 'POST', body: JSON.stringify({day: slotData.day, time_slot: slot, machine, room: value}), headers: {'Content-Type': 'application/json'} });
+        fetch(`${API_BASE_URL}/api/bookings/`, { method: 'POST', body: JSON.stringify({day: slotData.day, time_slot: slot, machine, room: value}), headers: {'Content-Type': 'application/json'} });
     };
 
     const handlePreviousDay = () => {
