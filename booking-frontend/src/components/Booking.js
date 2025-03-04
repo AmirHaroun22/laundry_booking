@@ -7,6 +7,13 @@ const Booking = () => {
     const[slotData, setSlotData] = useState(null);
     const[bookings, setBookings] = useState({});
 
+    const getDateString = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     const fetchBookingData = (dayParam = '') => {
         let url = `${API_BASE_URL}/api/booking_slots/`;
         if (dayParam) {
@@ -40,6 +47,20 @@ const Booking = () => {
         fetch(`${API_BASE_URL}/api/bookings/`, { method: 'POST', body: JSON.stringify({day: slotData.day, time_slot: slot, machine, room: value}), headers: {'Content-Type': 'application/json'} });
     };
 
+    const handlePreviousWeek = () => {
+        const currentDate = new Date(slotData.day);
+        currentDate.setDate(currentDate.getDate() - 7);
+        const newDate = getDateString(currentDate);
+        fetchBookingData(newDate);
+    };
+
+    const handleNextWeek = () => {
+        const currentDate = new Date(slotData.day);
+        currentDate.setDate(currentDate.getDate() + 7);
+        const newDate = getDateString(currentDate);
+        fetchBookingData(newDate);
+    };
+
     const handlePreviousDay = () => {
         fetchBookingData(slotData.previous_day);
     };
@@ -48,14 +69,23 @@ const Booking = () => {
         fetchBookingData(slotData.next_day);
     };
 
+    const handleToday = () => {
+        const today = new Date();
+        const newDate = getDateString(today);
+        fetchBookingData(newDate);
+    };
+
     if (!slotData) return <div>Loading...</div>
 
     return (
         <div>
             <h1>Booking for {slotData.day_name}, {slotData.day}</h1>
             <div className='navigation'>
+                <button onClick={handlePreviousWeek}>Previous Week</button>
                 <button onClick={handlePreviousDay}>Previous Day</button>
+                <button onClick={handleToday}>Today</button>
                 <button onClick={handleNextDay}>Next Day</button>
+                <button onClick={handleNextWeek}>Next Week</button>
             </div>
             <table border='1'>
                 <thead>
