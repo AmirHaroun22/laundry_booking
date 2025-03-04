@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import CONFIG from '../config';
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
@@ -6,6 +6,7 @@ const API_BASE_URL = CONFIG.API_BASE_URL;
 const Booking = () => {
     const[slotData, setSlotData] = useState(null);
     const[bookings, setBookings] = useState({});
+    const debounceTimer = useRef(null);
 
     const getDateString = (date) => {
         const year = date.getFullYear();
@@ -43,8 +44,24 @@ const Booking = () => {
     // Update state when an input field is changed
     const handleInputChange = (slot, machine, value) => {
         const key = `${slot}_${machine}`;
-        setBookings({...bookings, [key]: value});
-        fetch(`${API_BASE_URL}/api/bookings/`, { method: 'POST', body: JSON.stringify({day: slotData.day, time_slot: slot, machine, room: value}), headers: {'Content-Type': 'application/json'} });
+        setBookings(prv => ({ ...prv, [key]: value }));
+
+        //clear the previous timer if it exists
+        if (debounceTimer.current) {
+            clearTimeout(debounceTimer.current);
+        }
+
+        //Set a new timer to call the API after 2 seconds
+        debounceTimer.current = setTimeout(() => {
+            fetch(`${API_BASE_URL}/api/bookings/`, {
+                method: 'POST',
+                body: JSON.stringify({ day: slotData.day, time_slot: slot, machine, room: value }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => console.log('Booking saved', data))
+                .catch(error => console.error('Error saving booking', error));
+        }, 2000);
     };
 
     const handlePreviousWeek = () => {
