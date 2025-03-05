@@ -6,6 +6,7 @@ const API_BASE_URL = CONFIG.API_BASE_URL;
 const Booking = () => {
     const[slotData, setSlotData] = useState(null);
     const[bookings, setBookings] = useState({});
+    const[notification, setNotification] = useState('');
     const debounceTimer = useRef(null);
 
     const getDateString = (date) => {
@@ -41,17 +42,46 @@ const Booking = () => {
         fetchBookingData();
     }, []);
 
+    const validateRoomIdNumber = (value) => {
+        if (!/^\d{4}$/.test(value)) {
+            return 'Room ID number must be 4 digits';
+        }
+        const floor = parseInt(value.substring(0, 2), 10);
+        const roomNum = parseInt(value.substring(2), 10);
+        if (floor < 1 || floor > 17) {
+            return 'Floor number must be between 01 and 17';
+        }
+        if (floor >= 1 && floor <= 4) {
+            if (roomNum < 1 || roomNum > 16) {
+                return 'For floors 01-04, room number must be between 01 and 16';
+            }
+        } else if (floor >= 5 && floor <= 17) {
+            if (roomNum < 1 || roomNum > 10) {
+                return 'For floors 05-17, room number must be between 01 and 10';
+            }
+        }
+        return null;
+    };
+
     // Update state when an input field is changed
     const handleInputChange = (slot, machine, value) => {
         const key = `${slot}_${machine}`;
         setBookings(prv => ({ ...prv, [key]: value }));
 
-        //clear the previous timer if it exists
+        // Input validation
+        if (value !== '' ) {
+            const error = validateRoomIdNumber(value);
+            if (error) {
+                setNotification(error);
+                return;
+            }
+        }
+
+        // Clear the previous timer if it exists
         if (debounceTimer.current) {
             clearTimeout(debounceTimer.current);
         }
-
-        //Set a new timer to call the API after 2 seconds
+        // Set a new timer to call the API after 2 seconds
         debounceTimer.current = setTimeout(() => {
             fetch(`${API_BASE_URL}/api/bookings/`, {
                 method: 'POST',
@@ -59,8 +89,17 @@ const Booking = () => {
                 headers: { 'Content-Type': 'application/json' }
             })
                 .then(response => response.json())
-                .then(data => console.log('Booking saved', data))
-                .catch(error => console.error('Error saving booking', error));
+                .then(data => {
+                    console.log('Booking updated successfully', data);
+                    setNotification('Booking updated successfully');
+                    setTimeout(() => setNotification(''), 3000);
+                })
+                .catch(error => {
+                    console.error('Error saving booking', error);
+                    setNotification('Error saving booking');
+                    setTimeout(() => setNotification(''), 3000);
+                });
+                    
         }, 2000);
     };
 
@@ -104,6 +143,7 @@ const Booking = () => {
                 <button onClick={handleNextDay}>Next Day</button>
                 <button onClick={handleNextWeek}>Next Week</button>
             </div>
+            {notification && <div className='notification'>{notification}</div>}
             <table border='1'>
                 <thead>
                     <tr>
@@ -119,17 +159,25 @@ const Booking = () => {
                             <td>
                                 <input
                                 type='text'
-                                placeholder='Room'
+                                placeholder='Room ID number(e.g. 0312)'
                                 value={bookings[`${slot}_1`] || ''}
                                 onChange={(e) => handleInputChange(slot, 1, e.target.value)}
+                                onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '')}
+                                pattern="^((0[1-4])(0[1-9]|1[0-6])|(0[5-9]|1[0-7])(0[1-9]|10))$"
+                                maxLength="4"
+                                title='Room ID number must be 4 digits'
                                 />
                             </td>
                             <td>
                                 <input
                                 type='text'
-                                placeholder='Room'
+                                placeholder='Room ID number(e.g. 0312)'
                                 value={bookings[`${slot}_2`] || ''}
                                 onChange={(e) => handleInputChange(slot, 2, e.target.value)}
+                                onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '')}
+                                pattern="^((0[1-4])(0[1-9]|1[0-6])|(0[5-9]|1[0-7])(0[1-9]|10))$"
+                                maxLength="4"
+                                title='Room ID number must be 4 digits'
                                 />
                             </td>
                         </tr>
