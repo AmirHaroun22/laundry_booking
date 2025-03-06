@@ -52,6 +52,12 @@ def bookings_for_day(request):
         if room == "" or room is None:
             try:
                 booking = Booking.objects.get(day=day, time_slot=time_slot, machine=machine)
+                local_now = timezone.localtime(timezone.now())
+                booking_start = datetime.strptime(booking.time_slot.split('-')[0], "%H:%M").time()
+
+                if booking.day < local_now.date() or (booking.day == local_now.date() and booking_start < local_now.time()):
+                    # The booking is in the past
+                    return Response({'error': 'Cannot delete a booking in the past'}, status=403)
                 booking.delete()
                 return Response({'message': 'Booking deleted'})
             except Booking.DoesNotExist:
