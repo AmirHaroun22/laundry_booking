@@ -17,14 +17,31 @@ def validate_room(value):
         raise ValidationError("Invalid room number for the given floor.")
 
 def validate_time_slot(value, day=None):
-    """Ensure the time slot is in 'HH:MM-HH:MM' format and not in the past if day is today."""
+    """Validate time slot format, allowed 2-hour blocks, and prevent past bookings."""
+    # Check basic format first
     if not re.match(r'^\d{2}:\d{2}-\d{2}:\d{2}$', value):
         raise ValidationError("Time slot must be in the format 'HH:MM-HH:MM'.")
-    if day and day == timezone.localtime(timezone.now()).date():
-        now = timezone.localtime(timezone.now()).time()
+    
+    # Generate valid time slots (fixed with modulo 24 for proper midnight handling)
+    valid_slots = [
+        f"{h:02d}:00-{(h+2)%24:02d}:00" 
+        for h in range(0, 24, 2)
+    ]
+    
+    # Check if the value matches any valid slot
+    if value not in valid_slots:
+        raise ValidationError(
+            "Invalid time slot. Must be a 2-hour block starting at even hours. "
+            "Valid examples: '00:00-02:00', '10:00-12:00'"
+        )
+    
+    # Check if booking is in the past for today
+    if day and day == timezone.localdate():
         start_time_str, _ = value.split('-')
         start_time = datetime.strptime(start_time_str, "%H:%M").time()
-        if start_time < now:
+        current_time = timezone.localtime().time()
+        
+        if start_time < current_time:
             raise ValidationError("Cannot book a time slot that has already passed today.")
 
 def validate_machine(value):
