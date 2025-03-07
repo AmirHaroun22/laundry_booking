@@ -8,28 +8,6 @@ class BookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = '__all__'
 
-    def validate_day(self, value):
-        validate_day(value)
-        return value
-
-    def validate_time_slot(self, value):
-        day_str = self.initial_data.get('day')
-        if day_str:
-            day = datetime.strptime(day_str, "%Y-%m-%d").date()
-            validate_time_slot(value, day)
-        else:
-            validate_time_slot(value)  # fallback if day is missing
-        return value
-
-    def validate_machine(self, value):
-        validate_machine(value)
-        return value
-
-    def validate_room(self, value):
-        if value:
-            validate_room(value)
-        return value
-
     def validate(self, data):
         # Prevent duplicate bookings for the same day, time slot, and machine.
         if Booking.objects.filter(

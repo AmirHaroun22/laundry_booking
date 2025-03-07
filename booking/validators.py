@@ -24,7 +24,7 @@ def validate_time_slot(value, day=None):
     
     # Generate valid time slots (fixed with modulo 24 for proper midnight handling)
     valid_slots = [
-        f"{h:02d}:00-{(h+2)%24:02d}:00" 
+        f"{h:02d}:00-{(h+2):02d}:00" 
         for h in range(0, 24, 2)
     ]
     

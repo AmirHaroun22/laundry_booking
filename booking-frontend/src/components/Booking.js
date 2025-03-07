@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import CONFIG from '../config';
+import '../styles.css';
 
 const API_BASE_URL = CONFIG.API_BASE_URL;
 
@@ -41,6 +42,27 @@ const Booking = () => {
     useEffect(() => {
         fetchBookingData();
     }, []);
+
+    // 
+    const isPastTimeSlot = (slot) => {
+        if (!slotData) return false;
+        // Parse the booking day from slotData.day (assumed "YYYY-MM-DD") as local date
+        const [year, month, day] = slotData.day.split('-');
+        const bookingDate = new Date(year, month - 1, day); // Local date
+        // Get today's local date
+        const today = new Date();
+        const normalizedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const normalizedBooking = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
+        // Check if booking day is in the past or future
+        if (normalizedBooking < normalizedToday) return true;
+        if (normalizedBooking > normalizedToday) return false;
+        // If the booking day is today, compare the slot's start time
+        const [startStr] = slot.split('-');
+        const [startHour, startMinute] = startStr.split(':');
+        // Create a Date object for today at the slot's start time (local time)
+        const slotStart = new Date(today.getFullYear(), today.getMonth(), today.getDate(), parseInt(startHour, 10), parseInt(startMinute, 10), 0);
+        return slotStart < today;
+    };      
 
     const validateRoomIdNumber = (value) => {
         if (!/^\d{4}$/.test(value)) {
@@ -134,11 +156,11 @@ const Booking = () => {
     if (!slotData) return <div>Loading...</div>
 
     return (
-        <div>
+        <div className='container'>
             <h1>Booking for {slotData.day_name}, {slotData.day}</h1>
             <div className='navigation'>
-                <button onClick={handlePreviousWeek}>Previous Week</button>
-                <button onClick={handlePreviousDay}>Previous Day</button>
+                <button onClick={handlePreviousWeek}>Prev Week</button>
+                <button onClick={handlePreviousDay}>Prev Day</button>
                 <button onClick={handleToday}>Today</button>
                 <button onClick={handleNextDay}>Next Day</button>
                 <button onClick={handleNextWeek}>Next Week</button>
@@ -159,25 +181,27 @@ const Booking = () => {
                             <td>
                                 <input
                                 type='text'
-                                placeholder='Room ID number(e.g. 0312)'
+                                placeholder='Room ID (e.g. 0312)'
                                 value={bookings[`${slot}_1`] || ''}
                                 onChange={(e) => handleInputChange(slot, 1, e.target.value)}
                                 onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '')}
                                 pattern="^((0[1-4])(0[1-9]|1[0-6])|(0[5-9]|1[0-7])(0[1-9]|10))$"
                                 maxLength="4"
                                 title='Room ID number must be 4 digits'
+                                disabled={isPastTimeSlot(slot)}
                                 />
                             </td>
                             <td>
                                 <input
                                 type='text'
-                                placeholder='Room ID number(e.g. 0312)'
+                                placeholder='Room ID (e.g. 0312)'
                                 value={bookings[`${slot}_2`] || ''}
                                 onChange={(e) => handleInputChange(slot, 2, e.target.value)}
                                 onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '')}
                                 pattern="^((0[1-4])(0[1-9]|1[0-6])|(0[5-9]|1[0-7])(0[1-9]|10))$"
                                 maxLength="4"
                                 title='Room ID number must be 4 digits'
+                                disabled={isPastTimeSlot(slot)}
                                 />
                             </td>
                         </tr>
