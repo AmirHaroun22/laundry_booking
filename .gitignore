@@ -9,3 +9,7 @@ db.sqlite3
 # Ignore static files and media uploads
 staticfiles/
 media/
+
+
+ldap/certs/*
+certs/*

@@ -1,14 +1,36 @@
-import React, { useEffect, useState, useRef } from 'react';
-import CONFIG from '../config';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+// import CONFIG from '../config';
 import '../styles.css';
+import API_URL from '../config';
+import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = CONFIG.API_BASE_URL;
+
+const getCsrfToken = () => {
+    const cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+    return cookie ? cookie.split("=")[1] : null;
+  };
+  
+
+const API_BASE_URL = API_URL;
 
 const Booking = () => {
     const[slotData, setSlotData] = useState(null);
     const[bookings, setBookings] = useState({});
     const[notification, setNotification] = useState('');
     const debounceTimer = useRef(null);
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await fetch(`${API_BASE_URL}/logout/`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                'X-CSRFToken': getCsrfToken(),
+            },
+        });
+        navigate("/login");
+    };
 
     const getDateString = (date) => {
         const year = date.getFullYear();
@@ -17,16 +39,26 @@ const Booking = () => {
         return `${year}-${month}-${day}`;
     };
 
-    const fetchBookingData = (dayParam = '') => {
-        let url = `${API_BASE_URL}/api/booking_slots/`;
+    const fetchBookingData = useCallback((dayParam = '') => {
+        let url = `${API_BASE_URL}/booking_slots/`;
         if (dayParam) {
             url += `?day=${dayParam}`;
         }
-        fetch(url)
-            .then(response => response.json())
+        fetch(url, {
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.status === 403) {
+                    navigate("/login");
+                    throw new Error("Not authenticated");
+                }
+                return response.json();
+            })
             .then(json => {
                 setSlotData(json);
-                fetch(`${API_BASE_URL}/api/bookings/?day=${json.day}`)
+                fetch(`${API_BASE_URL}/bookings/?day=${json.day}`, {
+                    credentials: 'include'
+                })
                     .then(response => response.json())
                     .then(bookingsData => {
                         const bookingMap = {};
@@ -37,11 +69,11 @@ const Booking = () => {
                     });
             })
             .catch(error => console.error('Error Fetching booking Data', error));
-    };
+    }, [navigate]);
 
     useEffect(() => {
         fetchBookingData();
-    }, []);
+    }, [fetchBookingData]);
 
     // 
     const isPastTimeSlot = (slot) => {
@@ -105,10 +137,14 @@ const Booking = () => {
         }
         // Set a new timer to call the API after 2 seconds
         debounceTimer.current = setTimeout(() => {
-            fetch(`${API_BASE_URL}/api/bookings/`, {
+            fetch(`${API_BASE_URL}/bookings/`, {
                 method: 'POST',
+                credentials: 'include',
                 body: JSON.stringify({ day: slotData.day, time_slot: slot, machine, room: value }),
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                }
             })
                 .then(response => response.json())
                 .then(data => {
@@ -158,6 +194,7 @@ const Booking = () => {
     return (
         <div className='container'>
             <h1>Booking for {slotData.day_name}, {slotData.day}</h1>
+            <button onClick={handleLogout}>Logout</button>
             <div className='navigation'>
                 <button onClick={handlePreviousWeek}>Prev Week</button>
                 <button onClick={handlePreviousDay}>Prev Day</button>

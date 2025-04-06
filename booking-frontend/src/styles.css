@@ -1,3 +1,110 @@
+/* Booking Page Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.booking-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: #2c3e50;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: #3498db;
+}
+
+.navigation {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 10px;
+}
+
+.navigation button {
+    background-color: #3498db;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navigation button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+table th,
+table td {
+    border: 1px solid #e0e0e0;
+    padding: 12px;
+    text-align: center;
+}
+
+table th {
+    background-color: #3498db;
+    color: white;
+    font-weight: 500;
+}
+
+table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+table tr:hover {
+    background-color: #f1f8fe;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
 .notification {
     position: fixed;
     top: 0;
@@ -5,76 +112,120 @@
     width: 100%;
     background-color: #e9f7ef;
     border-bottom: 1px solid #c3e6cb;
-    padding: 10px;
+    padding: 15px;
     text-align: center;
     z-index: 1000;
+    font-size: 16px;
+    color: #155724;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    padding-top: 40px;
-}
-
-h1 {
-    text-align: center;
-    margin: 20px 0;
-}
-
-.navigation {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.navigation button {
-    background-color: #007bff;
-    border: none;
-    padding: 10px 15px;
-    margin: 5px;
+/* Logout button styling */
+.container > button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #e74c3c;
     color: white;
-    cursor: pointer;
+    border: none;
+    padding: 8px 16px;
     border-radius: 4px;
+    cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.navigation button:hover {
-    background-color: #0056b3;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-table th,
-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
-table th {
-    background-color: #f2f2f2;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
+.container > button:hover {
+    background-color: #c0392b;
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 15px;
+    }
+    
     .navigation {
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
+    }
+    
+    .navigation button {
+        width: 100%;
+        margin: 5px 0;
     }
     
     table th,
     table td {
-        padding: 6px;
+        padding: 8px;
+        font-size: 14px;
     }
+    
+    input[type="text"] {
+        padding: 8px;
+    }
+}
+/* Login Page Specific Styles */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-form input {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.login-form input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.login-form button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-form button:hover {
+    background-color: #2980b9;
+}
+
+.login-form button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+/* Background styling for the login page */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
 }
