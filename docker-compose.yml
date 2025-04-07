@@ -46,6 +46,40 @@ services:
       - PHPLDAPADMIN_HTTPS=false
     ports:
       - "8080:80"
+  
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: django_backend
+    environment:
+    - SECRET_KEY=${SECRET_KEY}
+    - DEBUG=${DEBUG}
+    - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+    - DB_NAME=${DB_NAME}
+    - DB_USER=${DB_USER}
+    - DB_PASSWORD=${DB_PASSWORD}
+    - DB_HOST=${DB_HOST}
+    - DB_PORT=${DB_PORT}
+    - LDAP_SERVER_URI=${LDAP_SERVER_URI}
+    - LDAP_BIND_DN=${LDAP_BIND_DN}
+    - LDAP_BIND_PASSWORD=${LDAP_BIND_PASSWORD}
+    - LDAP_USER_SEARCH_BASE=${LDAP_USER_SEARCH_BASE}
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - ldap
+
+  frontend:
+    build:
+      context: ./booking-frontend
+      dockerfile: Dockerfile.frontend
+    container_name: react_frontend
+    ports:
+      - "3443:443"
 
 volumes:
   ldap_data:
