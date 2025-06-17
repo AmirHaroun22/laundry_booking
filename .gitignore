@@ -1,15 +1,22 @@
-# Ignore virtual environment
-venv/
+**/__pycache__/
+**/*.py[cod]
+*.sqlite3
+*.log
+*.env
 .env
-*.pyc
-__pycache__/
+staticfiles
+DRF/staticfiles/
+DRF/venv/
+REACT/booking-frontend/node_modules/
+REACT/booking-frontend/build/
+REACT/booking-frontend/staticfiles/
 .DS_Store
-db.sqlite3
-
-# Ignore static files and media uploads
-staticfiles/
-media/
-
-
-ldap/certs/*
-certs/*
+Thumbs.db
+.vscode/
+.idea/
+.coverage
+htmlcov/
+.pytest_cache/
+*.pid
+*.sock
+*.swp

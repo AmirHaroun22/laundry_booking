@@ -3,15 +3,6 @@ dn: ou=users,dc=example,dc=com
 objectClass: organizationalUnit
 ou: users
 
-# Admin User
-dn: uid=testadmin,ou=users,dc=example,dc=com
-objectClass: inetOrgPerson
-uid: testadmin
-cn: Test Admin
-sn: Admin
-mail: testadmin@example.com
-userPassword: {TESTADMIN_PASSWORD}
-
 # Student User
 dn: uid=teststudent,ou=users,dc=example,dc=com
 objectClass: inetOrgPerson
@@ -19,4 +10,4 @@ uid: teststudent
 cn: Test Student
 sn: Student
 mail: teststudent@example.com
-userPassword: {TESTSTUDENT_PASSWORD}
+userPassword: teststudentpassword
