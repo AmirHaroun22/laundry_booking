@@ -4,7 +4,7 @@ import './Header.css';
 function Header({ isAuthenticated, onLogout, user }) {
   return (
     <header className="header">
-      <h2 className="header-title">The Great RVB Laundry Booking System</h2>
+      <h2 className="header-title">The Great RVB Laundry Booking</h2>
       
       <div className="header-user-container">
         {isAuthenticated && (
