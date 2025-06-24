@@ -4,12 +4,14 @@
 *.log
 *.env
 .env
+.env.production
 staticfiles
 DRF/staticfiles/
 DRF/venv/
 REACT/booking-frontend/node_modules/
 REACT/booking-frontend/build/
 REACT/booking-frontend/staticfiles/
+COPY REACT/booking-frontend/.env.production
 .DS_Store
 Thumbs.db
 .vscode/
