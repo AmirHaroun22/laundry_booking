@@ -95,10 +95,22 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - react_build:/usr/share/nginx/html
-      - ./staticfiles:/django_static  
+      - ./staticfiles:/django_static
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
     networks:
       - net
-
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot; done"
+    depends_on:
+      - nginx
+    networks:
+      - net
 
 volumes:
   react_build:
