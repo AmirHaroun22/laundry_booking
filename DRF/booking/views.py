@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render
-from rest_framework import generics, permissions, serializers
+from rest_framework import generics, permissions, serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Booking
@@ -77,15 +77,20 @@ class BookingDeleteView(generics.DestroyAPIView):
     serializer_class = BookingSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        date = self.request.query_params.get('date')
-        time_slot = self.request.query_params.get('time_slot')
-        machine = self.request.query_params.get('machine')
+    def delete(self, request, *args, **kwargs):
+        date = request.query_params.get('date')
+        time_slot = request.query_params.get('time_slot')
+        machine = request.query_params.get('machine')
 
-        queryset = Booking.objects.all()
-        if date and time_slot and machine:
-            queryset = queryset.filter(date=date, time_slot=time_slot, machine=machine)
-        return queryset
+        if not (date and time_slot and machine):
+            return Response({'detail': 'Missing parameters.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        booking = Booking.objects.filter(date=date, time_slot=time_slot, machine=machine).first()
+        if not booking:
+            return Response({'detail': 'Booking not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        booking.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 class CurrentUserView(APIView):
     """
