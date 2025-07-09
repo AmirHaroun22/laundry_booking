@@ -22,3 +22,4 @@ htmlcov/
 *.pid
 *.sock
 *.swp
+certbot/
