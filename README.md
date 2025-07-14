@@ -1,76 +1,75 @@
-# laundry_booking
+# Laundry Booking System
 
-This is a Laundry Booking System that allows users to book washing machines at different time slots. The project consists of a Django backend and a React frontend.
+A web app built with Django and React that simplifies laundry machine reservations for student dorm residents. Users can view available machines and book time slots efficiently. The system ensures fair access to shared laundry facilities.
 
-## Prerequisites
+---
 
-Before running the project, ensure you have the following installed:
+## Motivation?
 
-- Python 3.x
-- Node.js and npm
+Booking laundry machines in a 200-student dorm is challenging. Taking the elevator from the 17th floor to the Keller (basement laundry room) just to check availability—if the elevator is even working—only to find the machines already in use is frustrating.
 
-## Backend Setup
+This system was designed to make shared laundry management much easier by:
 
-1. Clone the repository:
+* Displaying real-time machine availability
+* Enabling online booking, cancellation, or rescheduling without needing to go down to the Keller
 
-   ```bash
-   git clone https://github.com/AmirHaroun22/laundry_booking.git
-   cd laundry_booking
-   ```
+---
 
-2. Create a virtual environment and activate it:
+## Quick Start
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
+Frontend:
 
-3. Install dependencies & run migrations:
+* [https://asasiya.com](https://asasiya.com)
 
-   ```bash
-   pip install -r requirements.txt
-   python manage.py migrate
-   ```
+API:
 
-4. Run the development server:
+* [https://api.asasiya.com/api/bookings/](https://api.asasiya.com/api/bookings/)
 
-   ```bash
-   python manage.py runserver
-   ```
+LDAP server:
 
-## Frontend Setup
+* [https://ldap.asasiya.com/](https://ldap.asasiya.com/)
 
-1. Navigate to the frontend folder:
+**Test Credentials**
 
-   ```bash
-   cd booking-frontend
-   ```
+* Frontend/Backend:
 
-2. Install dependencies:
+  * Username: `teststudent`
+  * Password: `teststudentpassword`
 
-   ```bash
-   npm install
-   ```
+* LDAP Admin:
 
-3. Start the React development server: 
+  * Username: `cn=admin,dc=example,dc=com`
+  * Password: `admin`
 
-   ```bash
-   npm start
-   ```
+---
 
-## API Endpoints
+## Usage
 
-| Method | Endpoint | Description |
-|--------|---------|-------------|
-| GET | `/api/booking_slots/` | Fetch available booking slots |
-| GET | `/api/bookings/?day=YYYY-MM-DD` | Fetch bookings for a specific day |
-| POST | `/api/bookings/` | Create or delete a booking |
+1. **Log in** using Test Credentials.
+2. **View** the list of available time slots for laundry machines.
+3. **Book** a slot by entering 4-digit room number (format and validation enforced):
 
+   * Must be 4 digits.
+   * First 2 digits = floor (01–17).
+   * For floors 1–4: room numbers 01–16.
+   * For floors 5–17: room numbers 01–10.
+   * For example 0116 or 0510
 
-## Contributing
+4. **Update** or **cancel**  bookings as needed.
 
-Feel free to fork and submit pull requests. For major changes, please open an issue first to discuss the changes.
+---
 
-## License
+## Contribution
 
-This project is licensed under the MIT License.
+Contributions are welcome!
+
+✅ Fork the repository
+✅ Create a feature branch
+✅ Commit your changes
+✅ Submit a pull request
+
+For major changes or proposals, please open an issue first to discuss your ideas.
+
+---
+
+Licensed under the MIT License.
