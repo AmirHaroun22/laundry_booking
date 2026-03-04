@@ -43,7 +43,7 @@ services:
     image: osixia/phpldapadmin:latest
     container_name: ldap_admin
     environment:
-      PHPLDAPADMIN_LDAP_HOSTS: "ldaps://ldap:636"
+      PHPLDAPADMIN_LDAP_HOSTS: ldap_server
       PHPLDAPADMIN_HTTPS: "false"
     ports:
       - "8082:80"
