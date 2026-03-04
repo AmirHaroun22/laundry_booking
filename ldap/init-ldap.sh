@@ -4,7 +4,7 @@
 /container/tool/run &
 
 # Wait for the LDAP server to be ready
-until ldapsearch -x -H ldaps://localhost:636 -D "${LDAP_BIND_DN}" -w "${LDAP_ADMIN_PASSWORD}" -b "" -s base "(objectclass=*)" 1>/dev/null 2>&1; do
+until ldapsearch -x -H ldap://localhost:389 -D "${LDAP_BIND_DN}" -w "${LDAP_ADMIN_PASSWORD}" -b "" -s base "(objectclass=*)" 1>/dev/null 2>&1; do
 echo "Waiting for LDAP server to be ready..."
 sleep 2
 done
